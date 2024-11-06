@@ -1,0 +1,22 @@
+[project]
+name = "nannyai"
+version = "0.1.0"
+description = "An app developed for parents that uses OpenAI or Gemini to analyse the screen for any signs of harmful content and report it."
+requires-python = ">=3.11"
+dependencies = [
+    "cryptography>=43.0.3",
+    "google-generativeai>=0.8.3",
+    "keyring>=25.5.0",
+    "keyrings-alt>=5.0.2",
+    "matplotlib>=3.9.2",
+    "mss>=9.0.2",
+    "openai>=1.54.1",
+    "pillow>=11.0.0",
+    "pyautogui>=0.9.54",
+    "pyscreenshot>=3.1",
+    "python-xlib>=0.33",
+    "reportlab>=4.2.5",
+    "requests>=2.32.3",
+    "tk>=0.1.0",
+    "vncdotool>=1.2.0",
+]
