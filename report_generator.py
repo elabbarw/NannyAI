@@ -161,7 +161,8 @@ class ReportGenerator:
             'violence': [0] * len(dates),
             'adult': [0] * len(dates),
             'hate': [0] * len(dates),
-            'drugs': [0] * len(dates)
+            'drugs': [0] * len(dates),
+            'gambling': [0] * len(dates)
         }
 
         for entry in entries:
