@@ -7,6 +7,7 @@ reportlab>=4.0.7
 python-xlib>=0.33.0
 vncdotool>=1.1.0
 keyrings.alt>=5.0.0
+psutil
 
 # Logging and Utils
 python-dotenv>=1.0.0

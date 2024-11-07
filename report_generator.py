@@ -260,7 +260,7 @@ class ReportGenerator:
         # Filter entries with alerts
         alert_entries = [
             entry for entry in entries
-            if any(score >= 0.7 for score in entry.get('analysis', {}).values())
+            if any(float(score) >= 0.7 for score in entry.get('analysis', {}).values())
         ]
 
         if alert_entries:

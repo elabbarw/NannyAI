@@ -109,15 +109,19 @@ class ContentAnalyzer:
                 messages=[
                     {
                         "role":"system",
-                        "content":"""You're NannyAI. A bot specialised in protecting children and minors from harmful content on the internet. You will be provided with screenshots to analyze for potentially harmful content. For each category (violence, adult, hate, drugs), provide a confidence score as a float between 0.0 and 1.0 .Return the results in a JSON format with these categories as keys using the following format: Example would be:
-                        {
-                                'violence': 0.0,
-                                'adult': 0.0,
-                                'hate': 0.0,
-                                'drugs': 0.0,
-                                'gambling': 0.0
-                        }
-                        """
+                        "content":"""You're NannyAI. A bot specialised in protecting children and minors from harmful content on the internet. 
+                                    You will be provided with screenshots to analyze for potentially harmful content. For each category (violence, adult, hate, drugs, gambling), 
+                                    provide a confidence score as a float between 0.0 and 1.0, and identify the program/application visible in the screenshot. 
+                                    Return the results in a JSON format using the following format:
+                                    {
+                                        'violence': 0.0,
+                                        'adult': 0.0,
+                                        'hate': 0.0,
+                                        'drugs': 0.0,
+                                        'gambling': 0.0,
+                                        'program_name': 'name_of_program'
+                                    }
+                                    """
 
 
                     },
@@ -148,24 +152,29 @@ class ContentAnalyzer:
             # Extract scores from response
             try:
                 content = response.choices[0].message.content
+                print (content)
                 content = json.loads(response.choices[0].message.content) if isinstance(content, str) else content
-                print(content)
                 scores = {
                     'violence': 0.0,
                     'adult': 0.0,
                     'hate': 0.0,
                     'drugs': 0.0,
-                    'gambling': 0.0
+                    'gambling': 0.0,
+                    'program_name': None  # Add program_name to track offending application
                 }
 
 
                 for key in scores.keys():
-                    if key in content:
+                    if key in content and key != 'program_name':
                         scores[key] += content[key]
 
                 # Special case check for 'explicit' contributing to the 'adult' score
                 if 'explicit' in content:
                     scores['adult'] += content['explicit']
+
+                # Get program name if provided
+                if 'program_name' in content:
+                    scores['program_name'] = content['program_name']
 
                 return scores
 
@@ -187,13 +196,14 @@ class ContentAnalyzer:
             image = Image.open(io.BytesIO(image_bytes))
 
             prompt = """
-            You're NannyAI. A bot that specialised in protecting children and minors from harmful content on the internet. You will be provided with screenshots to analyze for potentially harmful content. For each category (violence, adult, hate, drugs), provide a confidence score as a float between 0.0 and 1.0. Return the results in a JSON format with these categories as keys. Example would be:
+            You're NannyAI. A bot that specialised in protecting children and minors from harmful content on the internet. You will be provided with screenshots to analyze for potentially harmful content. For each category (violence, adult, hate, drugs, gambling), provide a confidence score as a float between 0.0 and 1.0 and identify the program/application visible in the screenshot. Return the results in a JSON format with these categories as keys. Example would be:
             {
                     'violence': 0.0,
                     'adult': 0.0,
                     'hate': 0.0,
                     'drugs': 0.0,
-                    'gambling': 0.0
+                    'gambling': 0.0,
+                    'program_name': 'name_of_program'
             }.
             NannyAI, pay close attention to chats and emojis that might hint towards anything sexual or violent since a minor would be viewing them. They won't explicitly mention anything to trigger but the emojis and their order would implicitly mention this. For example: eggplant emoji with peach emoji, etc.
             NannyAI, please analyze this image for potentially harmful content.
@@ -210,17 +220,22 @@ class ContentAnalyzer:
                     'adult': 0.0,
                     'hate': 0.0,
                     'drugs': 0.0,
-                    'gambling': 0.0
+                    'gambling': 0.0,
+                    'program_name': None  # Add program_name to track offending application
                 }
 
 
                 for key in scores.keys():
-                    if key in content:
+                    if key in content and key != 'program_name':
                         scores[key] += content[key]
 
                 # Special case check for 'explicit' contributing to the 'adult' score
                 if 'explicit' in content:
                     scores['adult'] += content['explicit']
+
+                # Get program name if provided
+                if 'program_name' in content:
+                    scores['program_name'] = content['program_name']
 
                 return scores
 

@@ -60,28 +60,7 @@ xcode-select --install
    pip install -r requirements.txt
    ```
 
-3. **Configure API Keys**
-
-   Option 1 - Environment Variables:
-   ```bash
-   # Windows (PowerShell)
-   $env:OPENAI_API_KEY="your_openai_key_here"
-   $env:GEMINI_API_KEY="your_gemini_key_here"
-   
-   # Linux/macOS
-   export OPENAI_API_KEY="your_openai_key_here"
-   export GEMINI_API_KEY="your_gemini_key_here"
-   ```
-
-   Option 2 - Configuration File:
-   - Create `.env` file in project root
-   - Add API keys:
-     ```
-     OPENAI_API_KEY=your_openai_key_here
-     GEMINI_API_KEY=your_gemini_key_here
-     ```
-
-4. **First Run**
+3. **First Run**
 
    ```bash
    python main.py

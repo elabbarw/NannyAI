@@ -9,6 +9,7 @@ import io
 from screenshot_history import ScreenshotHistory
 from device_manager import DeviceManager
 from content_analyzer import ContentAnalyzer
+from program_terminator import ProgramTerminator
 
 class ScreenshotManager:
     def __init__(self, config):
@@ -253,6 +254,7 @@ class ScreenshotManager:
 
             # Check for alerts
             alerts = []
+            program_to_terminate = None
             for category in monitored_categories:
                 if category not in analysis_results:
                     continue
@@ -264,9 +266,25 @@ class ScreenshotManager:
                     if score >= threshold:
                         alerts.append(f"{category.capitalize()} ({score:.2f})")
                         self.logger.warning(f"Harmful content detected: {category} ({score:.2f})")
+
+                    # Get program name if available
+                    if 'program_name' in analysis_results:
+                        program_to_terminate = analysis_results['program_name']
+
                 except (ValueError, TypeError) as e:
                     self.logger.error(f"Score validation error for {category}: {str(e)}")
                     continue
+
+            # Terminate program if identified
+            if program_to_terminate:
+                terminator = ProgramTerminator(self.logger)
+                matching_process = terminator.find_matching_process(program_to_terminate)
+                
+                if matching_process and terminator.safe_to_terminate(matching_process):
+                    if terminator.terminate_program(program_to_terminate):
+                        alerts.append(f"Terminated program: {matching_process['name']}")
+                else:
+                    self.logger.warning(f"Could not safely terminate program: {program_to_terminate}")
 
             # Send notification if needed
             if alerts and hasattr(self, 'notification_mgr'):
