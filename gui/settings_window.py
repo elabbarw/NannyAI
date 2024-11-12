@@ -203,11 +203,56 @@ class SettingsWindow(tk.Toplevel):
     def _create_email_settings(self, parent):
         email_settings = self.config.get('email_settings', {})
         
-        # Parent Email
-        self.parent_email_var = tk.StringVar(value=email_settings.get('parent_email', ''))
-        ttk.Label(parent, text="Parent Email:").pack(anchor=tk.W, padx=10, pady=2)
+        # SMTP Settings Group
+        smtp_frame = ttk.LabelFrame(parent, text="SMTP Settings", padding=10)
+        smtp_frame.pack(fill=tk.X, padx=10, pady=5)
+        
+        # SMTP Server
+        self.smtp_server_var = tk.StringVar(value=email_settings.get('smtp_server', 'smtp.gmail.com'))
+        ttk.Label(smtp_frame, text="SMTP Server:").pack(anchor=tk.W, padx=10, pady=2)
         ttk.Entry(
-            parent,
+            smtp_frame,
+            textvariable=self.smtp_server_var,
+            width=30
+        ).pack(fill=tk.X, padx=10, pady=2)
+        
+        # SMTP Port
+        self.smtp_port_var = tk.StringVar(value=str(email_settings.get('smtp_port', '587')))
+        ttk.Label(smtp_frame, text="SMTP Port:").pack(anchor=tk.W, padx=10, pady=2)
+        ttk.Entry(
+            smtp_frame,
+            textvariable=self.smtp_port_var,
+            width=10
+        ).pack(fill=tk.X, padx=10, pady=2)
+        
+        # Sender Email
+        self.sender_email_var = tk.StringVar(value=email_settings.get('sender_email', ''))
+        ttk.Label(smtp_frame, text="Sender Email:").pack(anchor=tk.W, padx=10, pady=2)
+        ttk.Entry(
+            smtp_frame,
+            textvariable=self.sender_email_var,
+            width=30
+        ).pack(fill=tk.X, padx=10, pady=2)
+        
+        # Sender Password
+        self.sender_password_var = tk.StringVar(value=email_settings.get('sender_password', ''))
+        ttk.Label(smtp_frame, text="Sender Password:").pack(anchor=tk.W, padx=10, pady=2)
+        password_entry = ttk.Entry(
+            smtp_frame,
+            textvariable=self.sender_password_var,
+            width=30,
+            show='*'
+        )
+        password_entry.pack(fill=tk.X, padx=10, pady=2)
+        
+        # Parent Email
+        parent_frame = ttk.LabelFrame(parent, text="Notification Settings", padding=10)
+        parent_frame.pack(fill=tk.X, padx=10, pady=5)
+        
+        self.parent_email_var = tk.StringVar(value=email_settings.get('parent_email', ''))
+        ttk.Label(parent_frame, text="Parent Email:").pack(anchor=tk.W, padx=10, pady=2)
+        ttk.Entry(
+            parent_frame,
             textvariable=self.parent_email_var,
             width=30
         ).pack(fill=tk.X, padx=10, pady=2)
@@ -271,8 +316,13 @@ class SettingsWindow(tk.Toplevel):
             self.config.set('content_thresholds', thresholds)
             
             # Save email settings
-            email_settings = self.config.get('email_settings', {})
-            email_settings['parent_email'] = self.parent_email_var.get()
+            email_settings = {
+                        'smtp_server': self.smtp_server_var.get(),
+                        'smtp_port': self.smtp_port_var.get(),
+                        'sender_email': self.sender_email_var.get(),
+                        'sender_password': self.sender_password_var.get(),
+                        'parent_email': self.parent_email_var.get()
+                    }
             self.config.set('email_settings', email_settings)
             
             self.destroy()
