@@ -1,6 +1,6 @@
 # Application constants
-APP_NAME = "Screen Content Monitor"
-APP_VERSION = "1.0.0"
+APP_NAME = "NannyAI"
+APP_VERSION = "0.1.0"
 
 # File paths
 CONFIG_FILE = "data/config.json"
